@@ -1,4 +1,4 @@
-const { Product } = require("../models");
+const { Product } = require('../models');
 
 module.exports = {
   async create(req, res) {
@@ -15,7 +15,7 @@ module.exports = {
       const newProduct = await Product.create({
         name,
         idCategory,
-        description,
+        description: description || '',
         picture,
         value,
         quantity,
@@ -28,10 +28,44 @@ module.exports = {
   },
   async list(req, res) {
     const products = await Product.findAll({
-      include: { association: "category" },
-      order: [["quantity", "ASC"]],
+      include: { association: 'category' },
+      order: [['quantity', 'ASC']],
     });
 
     return res.status(200).json(products);
+  },
+  async index(req, res) {
+    const { id } = req.params;
+
+    const product = await Product.findByPk(id);
+
+    if (!product) return res.status(400).json({ msg: 'Produto não existe' });
+
+    return res.json(product);
+  },
+  async update(req, res) {
+    const { id } = req.params;
+
+    const product = await Product.findByPk(id);
+
+    if (!product) return res.status(400).json({ msg: 'Produto não existe' });
+
+    const newProduct = await product.update(req.body);
+
+    return res.json(newProduct);
+  },
+  async delete(req, res) {
+    const { id } = req.params;
+
+    const product = await Product.findByPk(id);
+
+    if (!product) return res.status(400).json({ msg: 'Produto não existe' });
+
+    await product.destroy(req.body);
+
+    return res.json({
+      message: `Product with id ${id} was deleted.`,
+      userMessage: 'Produto deletado com sucesso.',
+    });
   },
 };
