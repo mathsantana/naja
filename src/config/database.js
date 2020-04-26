@@ -20,8 +20,7 @@ module.exports = {
     operatorsAliases: false,
   },
   production: {
-    use_env_variable:
-      'postgres://apyvlbulbtxisd:b14e689377eab96c537befc6f8eb015887f16a95545db01e7105cd16615d60f5@ec2-34-234-228-127.compute-1.amazonaws.com:5432/dad3tpkd43jvcu',
+    use_env_variable: 'postgresql-solid-17781',
     username: 'apyvlbulbtxisd',
     password:
       'b14e689377eab96c537befc6f8eb015887f16a95545db01e7105cd16615d60f5',
