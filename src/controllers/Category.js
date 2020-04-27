@@ -4,7 +4,11 @@ module.exports = {
   async index(req, res) {
     const { id } = req.params;
 
-    const category = await Category.findByPk(id);
+    const category = await Category.findByPk(id, {
+      include: {
+        association: 'products',
+      },
+    });
 
     if (!category) return res.status(400).json({ msg: 'Categoria não existe' });
 
