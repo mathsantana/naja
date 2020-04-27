@@ -15,13 +15,22 @@ const Product = require('./controllers/Product');
 
 const routes = express.Router();
 
+const corsOptions = {
+  origin: '*',
+  methods: 'GET, POST, PUT, DELETE',
+  optionsSuccessStatus: 204,
+  credentials: true,
+};
+
+routes.options('*', cors(corsOptions));
+
 routes.use((req, res, next) => {
   //Qual site tem permissão de realizar a conexão, no exemplo abaixo está o "*" indicando que qualquer site pode fazer a conexão
   res.header('Access-Control-Allow-Origin', '*');
   //Quais são os métodos que a conexão pode realizar na API
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  console.log('Aconteceu!');
-  routes.use(cors());
+  //Quais são os headers que a request pode ter
+  routes.use(cors(corsOptions));
   next();
 });
 
