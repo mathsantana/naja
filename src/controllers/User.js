@@ -1,23 +1,26 @@
-require("dotenv/config");
-const { User } = require("../models");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const { google } = require("googleapis");
-const OAuth2Data = require("../config/googleAuth.json");
+require('dotenv/config');
+const { User } = require('../models');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const { google } = require('googleapis');
+const OAuth2Data = require('../config/googleAuth.json');
 
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+const ACCESS_URL = process.env.NODE_ENV
+  ? OAuth2Data.custom.production
+  : OAuth2Data.custom.dev;
 const REDIRECT_URL = OAuth2Data.web.redirect_uris[0];
 
 const defaultScope = [
-  "https://www.googleapis.com/auth/userinfo.email",
-  "https://www.googleapis.com/auth/userinfo.profile",
+  'https://www.googleapis.com/auth/userinfo.email',
+  'https://www.googleapis.com/auth/userinfo.profile',
 ];
 
 const oAuth2Client = new google.auth.OAuth2(
   CLIENT_ID,
   CLIENT_SECRET,
-  REDIRECT_URL
+  ACCESS_URL + REDIRECT_URL
 );
 
 module.exports = {
@@ -34,12 +37,12 @@ module.exports = {
     const { email, password } = req.body;
     const user = await User.findByPk(email);
 
-    if (!user) return res.status(400).json({ message: "User not found!" });
+    if (!user) return res.status(400).json({ message: 'User not found!' });
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid)
-      return res.status(400).json({ message: "Invalid password!" });
+      return res.status(400).json({ message: 'Invalid password!' });
 
     const token = jwt.sign(
       {
@@ -54,7 +57,7 @@ module.exports = {
   },
   async googleSignIn(req, res) {
     const url = oAuth2Client.generateAuthUrl({
-      access_type: "offline",
+      access_type: 'offline',
       scope: defaultScope,
     });
     res.redirect(url);
@@ -65,10 +68,10 @@ module.exports = {
       // Get an access token based on our OAuth code
       oAuth2Client.getToken(code, function (err, tokens) {
         if (err) {
-          console.log("Error authenticating");
+          console.log('Error authenticating');
           console.log(err);
         } else {
-          console.log("Successfully authenticated");
+          console.log('Successfully authenticated');
           oAuth2Client.setCredentials(tokens);
           authed = true;
           res.json({ token: tokens });
@@ -78,7 +81,7 @@ module.exports = {
   },
 
   async authMiddleware(req, res, next) {
-    const token = req.headers.authorization.split(" ")[1];
+    const token = req.headers.authorization.split(' ')[1];
 
     oAuth2Client
       .verifyIdToken({
