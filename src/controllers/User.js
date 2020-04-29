@@ -80,7 +80,9 @@ module.exports = {
   },
 
   async authMiddleware(req, res, next) {
-    const token = req.headers.authorization.split(' ')[1];
+    const token = req.headers.authorization
+      ? req.headers.authorization.split(' ')[1]
+      : '';
 
     oAuth2Client
       .verifyIdToken({
