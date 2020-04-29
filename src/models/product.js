@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
       name: DataTypes.STRING,
       idCategory: DataTypes.INTEGER,
       description: DataTypes.STRING,
-      picture: DataTypes.STRING,
+      picture: DataTypes.TEXT,
       value: { type: DataTypes.DECIMAL(10, 2) },
       quantity: DataTypes.INTEGER,
     },

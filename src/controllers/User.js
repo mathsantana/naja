@@ -7,10 +7,9 @@ const OAuth2Data = require('../config/googleAuth.json');
 
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
-const ACCESS_URL = process.env.NODE_ENV
-  ? OAuth2Data.custom.production
-  : OAuth2Data.custom.dev;
-const REDIRECT_URL = OAuth2Data.web.redirect_uris[0];
+const REDIRECT_URL = process.env.NODE_ENV
+  ? OAuth2Data.web.redirect_uris[1]
+  : OAuth2Data.web.redirect_uris[0];
 
 const defaultScope = [
   'https://www.googleapis.com/auth/userinfo.email',
@@ -20,7 +19,7 @@ const defaultScope = [
 const oAuth2Client = new google.auth.OAuth2(
   CLIENT_ID,
   CLIENT_SECRET,
-  ACCESS_URL + REDIRECT_URL
+  REDIRECT_URL
 );
 
 module.exports = {
@@ -81,7 +80,9 @@ module.exports = {
   },
 
   async authMiddleware(req, res, next) {
-    const token = req.headers.authorization.split(' ')[1];
+    const token = req.headers.authorization
+      ? req.headers.authorization.split(' ')[1]
+      : '';
 
     oAuth2Client
       .verifyIdToken({
